@@ -1,0 +1,94 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #2dd4bf;
+  --accent: #f97316;
+  --bg-custom: #020617;
+  --font-main: "Space Grotesk";
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-main), system-ui, sans-serif;
+  background-color: #020617;
+}
+
+[data-mode="light"] body {
+  background-color: #f8fafc;
+}
+
+.bg-theme {
+  background: radial-gradient(circle at top, color-mix(in srgb, var(--primary) 16%, transparent), transparent 35%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent) 12%, transparent), transparent 30%),
+    var(--bg-custom);
+}
+
+[data-mode="light"] .bg-theme {
+  color: #0f172a;
+  background:
+    radial-gradient(circle at top, color-mix(in srgb, var(--primary) 14%, white), transparent 40%),
+    radial-gradient(circle at bottom right, color-mix(in srgb, var(--accent) 10%, white), transparent 30%),
+    #f8fafc;
+}
+
+.glass-card {
+  background: linear-gradient(170deg, rgb(255 255 255 / 14%), rgb(255 255 255 / 6%));
+  border: 1px solid rgb(255 255 255 / 18%);
+  backdrop-filter: blur(12px);
+}
+
+.mesh-overlay {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 4%) 1px, transparent 1px);
+  background-size: 36px 36px;
+  mask-image: radial-gradient(circle at center, black 30%, transparent 80%);
+}
+
+.floating-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(40px);
+  animation: float 10s ease-in-out infinite;
+}
+
+.neon-ring {
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 14%), 0 0 30px color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
+@keyframes float {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -18px, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}

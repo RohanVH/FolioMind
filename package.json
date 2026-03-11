@@ -1,0 +1,21 @@
+{
+  "name": "foliomind",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "dev:admin": "npm --prefix admin run dev",
+    "dev:server": "npm --prefix server run dev",
+    "build:client": "npm --prefix client run build",
+    "build:admin": "npm --prefix admin run build",
+    "start:server": "npm --prefix server run start"
+  },
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "dependencies": {
+    "mongodb": "^7.1.0",
+    "motion": "^12.35.2",
+    "ollama": "^0.6.3"
+  }
+}
