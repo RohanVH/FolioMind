@@ -6,6 +6,7 @@ import { Navbar } from "./components/layout/Navbar";
 import { usePortfolioData } from "./hooks/usePortfolioData";
 import { AboutPage } from "./pages/AboutPage";
 import { AssistantPage } from "./pages/AssistantPage";
+import { CertificatesPage } from "./pages/CertificatesPage";
 import { ContactPage } from "./pages/ContactPage";
 import { HomePage } from "./pages/HomePage";
 import { ProjectsPage } from "./pages/ProjectsPage";
@@ -20,7 +21,7 @@ const ErrorState = ({ message }) => (
 );
 
 const App = () => {
-  const { site, skills, projects, loading, error } = usePortfolioData();
+  const { site, skills, projects, certificates, loading, error } = usePortfolioData();
 
   if (loading) {
     return <LoadingState />;
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/" element={<HomePage site={site} featuredProjects={featuredProjects} />} />
         <Route path="/about" element={<AboutPage site={site} />} />
         <Route path="/skills" element={<SkillsPage skills={skills} />} />
+        <Route path="/certificates" element={<CertificatesPage />} />
         <Route path="/projects" element={<ProjectsPage projects={projects} />} />
         <Route path="/contact" element={<ContactPage site={site} />} />
         <Route path="/assistant" element={<AssistantPage />} />

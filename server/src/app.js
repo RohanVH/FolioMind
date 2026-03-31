@@ -4,6 +4,7 @@ import { env } from "./config/env.js";
 import { errorHandler, notFound } from "./middleware/errorHandler.js";
 import aiRoutes from "./routes/aiRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
+import certificateRoutes from "./routes/certificateRoutes.js";
 import hackerRankRoutes from "./routes/hackerRankRoutes.js";
 import profileRoutes from "./routes/profileRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
@@ -39,6 +40,7 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/api/certificates", certificateRoutes);
 app.use("/api/hackerrank", hackerRankRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/skills", skillRoutes);

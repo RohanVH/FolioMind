@@ -3,6 +3,7 @@ import { DashboardLayout } from "./components/layout/DashboardLayout";
 import { ProtectedRoute } from "./components/layout/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
 import { AboutContentPage } from "./pages/AboutContentPage";
+import { CertificatesManagementPage } from "./pages/CertificatesManagementPage";
 import { MediaPage } from "./pages/MediaPage";
 import { OverviewPage } from "./pages/OverviewPage";
 import { ProjectsPage } from "./pages/ProjectsPage";
@@ -23,6 +24,7 @@ const App = () => (
     >
       <Route index element={<OverviewPage />} />
       <Route path="about-content" element={<AboutContentPage />} />
+      <Route path="certificates" element={<CertificatesManagementPage />} />
       <Route path="projects" element={<ProjectsPage />} />
       <Route path="skills" element={<SkillsPage />} />
       <Route path="site-content" element={<SiteContentPage />} />

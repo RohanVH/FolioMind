@@ -60,3 +60,10 @@ export const deleteResumeFile = async (publicId) => {
   });
   return data;
 };
+
+// Certificate APIs
+export const getCertificates = async () => (await api.get("/certificates/admin/all")).data;
+export const createCertificate = async (payload) => (await api.post("/certificates", payload)).data;
+export const updateCertificate = async (id, payload) => (await api.put(`/certificates/${id}`, payload)).data;
+export const deleteCertificate = async (id) => (await api.delete(`/certificates/${id}`)).data;
+export const reorderCertificates = async (payload) => (await api.post("/certificates/admin/reorder", payload)).data;

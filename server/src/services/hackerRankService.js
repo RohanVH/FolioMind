@@ -24,7 +24,7 @@ const extractUsername = (profileUrl = "") => {
   }
 };
 
-const extractCertificatesFromReaderText = (text = "") => {
+const extractCertificatesFromReaderText = (text = "", profileUrl = "") => {
   const lines = String(text || "")
     .split(/\r?\n/)
     .map((line) => cleanText(line))
@@ -52,19 +52,36 @@ const extractCertificatesFromReaderText = (text = "") => {
     if (cleaned.length < 3) continue;
     if (cleaned.length > 120) continue;
     if (/view certificate|verify|credential/i.test(cleaned)) continue;
-    results.push(cleaned);
+    
+    results.push({
+      title: cleaned,
+      skill: extractSkillFromTitle(cleaned),
+      link: `${profileUrl}#certificates`,
+      date: null,
+      image: null,
+      verified: true
+    });
   }
 
-  return uniqueNonEmpty(results);
+  return uniqueNonEmpty(results.map(r => r.title)).map(title => ({
+    title,
+    skill: extractSkillFromTitle(title),
+    link: `${profileUrl}#certificates`,
+    date: null,
+    image: null,
+    verified: true
+  }));
 };
 
-const fetchFromRestApis = async (username = "") => {
+const fetchFromRestApis = async (username = "", profileUrl = "") => {
   if (!username) return [];
 
   const endpoints = [
     `https://www.hackerrank.com/rest/hackers/${encodeURIComponent(username)}/certificates`,
     `https://www.hackerrank.com/rest/hackers/${encodeURIComponent(username)}/badges`
   ];
+
+  const certificates = [];
 
   for (const endpoint of endpoints) {
     try {
@@ -79,19 +96,64 @@ const fetchFromRestApis = async (username = "") => {
       }
       const payload = await response.json();
       const model = Array.isArray(payload?.models) ? payload.models : Array.isArray(payload) ? payload : [];
-      const names = model
-        .map((item) => item?.name || item?.title || item?.certificate_name || item?.badge_name || "")
-        .filter(Boolean);
-      const normalized = uniqueNonEmpty(names);
-      if (normalized.length) {
-        return normalized;
+      
+      model.forEach((item) => {
+        const title = item?.name || item?.title || item?.certificate_name || item?.badge_name || "";
+        if (title) {
+          certificates.push({
+            title: cleanText(title),
+            skill: extractSkillFromTitle(title),
+            link: item?.url || item?.certificate_url || `${profileUrl}#certificates`,
+            date: item?.issued_date || item?.date || null,
+            image: item?.image_url || item?.badge_image || null,
+            verified: item?.verified || true
+          });
+        }
+      });
+
+      if (certificates.length) {
+        break;
       }
     } catch {
       // ignore endpoint errors and continue trying
     }
   }
 
-  return [];
+  return certificates;
+};
+
+const extractSkillFromTitle = (title = "") => {
+  const skillKeywords = {
+    problem: "Problem Solving",
+    algorithm: "Algorithms",
+    data: "Data Structures",
+    sql: "SQL",
+    python: "Python",
+    javascript: "JavaScript",
+    java: "Java",
+    cpp: "C++",
+    c: "C",
+    react: "React",
+    html: "HTML",
+    css: "CSS",
+    web: "Web Development",
+    machine: "Machine Learning",
+    ai: "Artificial Intelligence",
+    git: "Git",
+    linux: "Linux",
+    shell: "Shell",
+    rest: "REST API",
+    api: "API"
+  };
+
+  const lowerTitle = title.toLowerCase();
+  for (const [keyword, skill] of Object.entries(skillKeywords)) {
+    if (lowerTitle.includes(keyword)) {
+      return skill;
+    }
+  }
+
+  return "General Knowledge";
 };
 
 const fetchFromReader = async (profileUrl = "") => {
@@ -103,7 +165,7 @@ const fetchFromReader = async (profileUrl = "") => {
     return [];
   }
   const text = await response.text();
-  return extractCertificatesFromReaderText(text);
+  return extractCertificatesFromReaderText(text, profileUrl);
 };
 
 export const fetchHackerRankCertificates = async (profileUrl = "") => {
@@ -112,7 +174,7 @@ export const fetchHackerRankCertificates = async (profileUrl = "") => {
   }
 
   const username = extractUsername(profileUrl);
-  const fromRest = await fetchFromRestApis(username);
+  const fromRest = await fetchFromRestApis(username, profileUrl);
   if (fromRest.length) {
     return { certificates: fromRest, warning: "" };
   }

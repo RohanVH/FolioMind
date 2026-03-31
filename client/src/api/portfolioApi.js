@@ -15,6 +15,11 @@ export const fetchProjects = async () => {
   return data;
 };
 
+export const fetchCertificates = async () => {
+  const { data } = await api.get("/certificates");
+  return data;
+};
+
 export const fetchTheme = async () => {
   const { data } = await api.get("/theme");
   return data;

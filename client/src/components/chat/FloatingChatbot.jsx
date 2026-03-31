@@ -1,77 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { Bot, Send, X } from "lucide-react";
-import { useState } from "react";
-import { askAiAssistant } from "../../api/portfolioApi";
-
-const buildLocalFallbackReply = ({ message, site, skills, projects }) => {
-  const prompt = (message || "").toLowerCase();
-  const siteName = "FolioMind";
-  const roleText =
-    site?.heroSubtitle ||
-    site?.heroIntro ||
-    "Full stack developer focused on React, Node.js, and AI integrations.";
-
-  if (
-    prompt.includes("name of this site") ||
-    prompt.includes("site name") ||
-    prompt.includes("website name") ||
-    prompt.includes("name of the website")
-  ) {
-    return `This site is called ${siteName}. It is an AI powered developer portfolio platform.`;
-  }
-
-  if (prompt.includes("what this website does") || prompt.includes("what does this website do")) {
-    return `${siteName} showcases the developer profile, skills, projects, contact details, and has an AI assistant for visitor questions.`;
-  }
-
-  if (prompt.includes("name") || prompt.includes("who is")) {
-    return `His name is ${site?.heroTitle || "not configured yet"}.`;
-  }
-
-  if (prompt.includes("role") || prompt.includes("position") || prompt.includes("what does he do")) {
-    return `His role: ${roleText}`;
-  }
-
-  if (prompt.includes("skill") || prompt.includes("tech") || prompt.includes("stack")) {
-    if (!skills?.length) {
-      return "No skills are configured yet in the portfolio.";
-    }
-    const summary = skills
-      .slice(0, 12)
-      .map((skill) => skill.name)
-      .join(", ");
-    return `Rohan's skills include: ${summary}.`;
-  }
-
-  if (prompt.includes("project") || prompt.includes("built")) {
-    if (!projects?.length) {
-      return "No projects are configured yet in the portfolio.";
-    }
-    const summary = projects
-      .slice(0, 3)
-      .map((project) => project.title)
-      .join(", ");
-    return `He has built projects like: ${summary}.`;
-  }
-
-  if (prompt.includes("full stack")) {
-    return site?.heroSubtitle
-      ? `Yes. ${site.heroSubtitle}`
-      : "Yes, this portfolio presents him as a full stack developer.";
-  }
-
-  if (prompt.includes("contact") || prompt.includes("email") || prompt.includes("github")) {
-    return `Contact details:\nEmail: ${site?.contactEmail || "Not configured"}\nGitHub: ${site?.github || "Not configured"}`;
-  }
-
-  if (prompt.includes("thank")) {
-    return "You are welcome. Ask me about projects, skills, role, or contact details.";
-  }
-
-  return site?.aboutText || "Portfolio data is available, but this answer is currently limited.";
-};
+import { useState, useEffect } from "react";
+import { askAiAssistant, fetchCertificates } from "../../api/portfolioApi";
+import { IntentDetectionService } from "../../services/intentDetectionService";
 
 export const FloatingChatbot = ({ site, skills = [], projects = [] }) => {
+  const [certificates, setCertificates] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -81,6 +15,19 @@ export const FloatingChatbot = ({ site, skills = [], projects = [] }) => {
       content: "Ask me anything about this portfolio."
     }
   ]);
+
+  // Load certificates on mount
+  useEffect(() => {
+    const loadCertificates = async () => {
+      try {
+        const certs = await fetchCertificates();
+        setCertificates(certs || []);
+      } catch (error) {
+        console.error("Failed to load certificates:", error);
+      }
+    };
+    loadCertificates();
+  }, []);
 
   const handleSend = async () => {
     const content = input.trim();
@@ -95,22 +42,29 @@ export const FloatingChatbot = ({ site, skills = [], projects = [] }) => {
     setLoading(true);
 
     try {
-      const res = await askAiAssistant({
+      // LOGIC-FIRST: Try to handle with intent detection
+      const portfolioData = { site, skills, projects, certificates };
+      const logicResult = IntentDetectionService.handleLogicFirst(content, portfolioData);
+
+      if (!logicResult.fallbackToAI) {
+        // We have a direct answer - no AI needed
+        const response = IntentDetectionService.formatResponse(logicResult.response);
+        setMessages((prev) => [...prev, { role: "assistant", content: response }]);
+        setLoading(false);
+        return;
+      }
+
+      // FALLBACK TO AI: Unknown intent - use LLM
+      const aiResult = await askAiAssistant({
         message: content,
         history
       });
-      setMessages((prev) => [...prev, { role: "assistant", content: res.message }]);
+      setMessages((prev) => [...prev, { role: "assistant", content: aiResult.message }]);
     } catch (error) {
-      const fallback = buildLocalFallbackReply({
-        message: content,
-        site,
-        skills,
-        projects
-      });
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: fallback }
-      ]);
+      console.error("Error handling message:", error);
+      // Final fallback - return helpful error message
+      const response = "I encountered an error. Please try again or ask about certificates, skills, projects, or contact info.";
+      setMessages((prev) => [...prev, { role: "assistant", content: response }]);
     } finally {
       setLoading(false);
     }
