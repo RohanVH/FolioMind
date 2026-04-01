@@ -29,7 +29,7 @@ export const env = {
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET || "",
   openAiApiKey: process.env.OPENAI_API_KEY || "",
   openAiModel: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-  aiProvider: process.env.AI_PROVIDER || "ollama",
+  aiProvider: process.env.AI_PROVIDER || "none",
   aiBaseUrl: process.env.AI_BASE_URL || "",
   aiApiKey: process.env.AI_API_KEY || "",
   aiModel: process.env.AI_MODEL || "",

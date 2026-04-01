@@ -2,12 +2,21 @@ import mongoose from "mongoose";
 import dns from "node:dns";
 import { env } from "./env.js";
 
+let cachedConnectionPromise = null;
+
 export const connectDb = async () => {
   if (!env.mongoUri) {
     throw new Error("MONGO_URI is not configured.");
   }
 
-  // Some corporate/local resolvers refuse SRV lookups used by mongodb+srv URIs.
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
+  }
+
+  if (cachedConnectionPromise) {
+    return cachedConnectionPromise;
+  }
+
   const dnsServers = env.mongoDnsServers
     .split(",")
     .map((item) => item.trim())
@@ -16,5 +25,13 @@ export const connectDb = async () => {
     dns.setServers(dnsServers);
   }
 
-  await mongoose.connect(env.mongoUri);
+  cachedConnectionPromise = mongoose.connect(env.mongoUri);
+
+  try {
+    await cachedConnectionPromise;
+    return mongoose.connection;
+  } catch (error) {
+    cachedConnectionPromise = null;
+    throw error;
+  }
 };
