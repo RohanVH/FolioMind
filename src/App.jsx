@@ -1,9 +1,11 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { FloatingChatbot } from "./components/chat/FloatingChatbot";
 import { AmbientBackdrop } from "./components/layout/AmbientBackdrop";
 import { Footer } from "./components/layout/Footer";
 import { Navbar } from "./components/layout/Navbar";
 import { usePortfolioData } from "./hooks/usePortfolioData";
+import AdminApp from "./admin/App";
+import { AuthProvider } from "./admin/context/AuthContext";
 import { AboutPage } from "./pages/AboutPage";
 import { AssistantPage } from "./pages/AssistantPage";
 import { CertificatesPage } from "./pages/CertificatesPage";
@@ -20,7 +22,7 @@ const ErrorState = ({ message }) => (
   <div className="flex min-h-screen items-center justify-center text-red-300">{message}</div>
 );
 
-const App = () => {
+const PublicApp = () => {
   const { site, skills, projects, certificates, loading, error } = usePortfolioData();
 
   if (loading) {
@@ -50,6 +52,20 @@ const App = () => {
       <FloatingChatbot site={site} skills={skills} projects={projects} />
     </div>
   );
+};
+
+const App = () => {
+  const location = useLocation();
+
+  if (location.pathname.startsWith("/admin")) {
+    return (
+      <AuthProvider>
+        <AdminApp />
+      </AuthProvider>
+    );
+  }
+
+  return <PublicApp />;
 };
 
 export default App;
