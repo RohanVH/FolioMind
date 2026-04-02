@@ -6,7 +6,8 @@ let cachedConnectionPromise = null;
 
 export const connectDb = async () => {
   if (!env.mongoUri) {
-    throw new Error("MONGO_URI is not configured.");
+    console.error("DB URI missing");
+    return null;
   }
 
   if (mongoose.connection.readyState === 1) {
@@ -14,7 +15,11 @@ export const connectDb = async () => {
   }
 
   if (cachedConnectionPromise) {
-    return cachedConnectionPromise;
+    try {
+      return await cachedConnectionPromise;
+    } catch {
+      cachedConnectionPromise = null;
+    }
   }
 
   const dnsServers = env.mongoDnsServers
@@ -31,7 +36,8 @@ export const connectDb = async () => {
     await cachedConnectionPromise;
     return mongoose.connection;
   } catch (error) {
+    console.error("DB connection failed:", error.message);
     cachedConnectionPromise = null;
-    throw error;
+    return null;
   }
 };
