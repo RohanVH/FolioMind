@@ -1,20 +1,3 @@
-import dotenv from "dotenv";
-import fs from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const serverRoot = path.resolve(__dirname, "..", "..");
-const envPath = path.join(serverRoot, ".env");
-const envExamplePath = path.join(serverRoot, ".env.example");
-
-if (fs.existsSync(envPath)) {
-  dotenv.config({ path: envPath });
-} else if (fs.existsSync(envExamplePath)) {
-  dotenv.config({ path: envExamplePath });
-}
-
 export const env = {
   port: process.env.PORT || 5000,
   nodeEnv: process.env.NODE_ENV || "development",
