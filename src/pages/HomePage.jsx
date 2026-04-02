@@ -1,9 +1,10 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowRight, Download, Sparkles } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { PageContainer } from "../components/layout/PageContainer";
-import { HeroScene } from "../components/three/HeroScene";
+
+const HeroScene = lazy(() => import("../components/three/HeroScene").then((module) => ({ default: module.HeroScene })));
 
 export const HomePage = ({ site, featuredProjects = [] }) => {
   const [activeSlide, setActiveSlide] = useState(0);
@@ -98,7 +99,9 @@ export const HomePage = ({ site, featuredProjects = [] }) => {
           transition={{ duration: 0.55, delay: 0.12 }}
           className="relative min-h-[360px] overflow-hidden rounded-[1.75rem] border border-white/10 bg-black/20"
         >
-          <HeroScene />
+          <Suspense fallback={<div className="hero-scene-shell" />}>
+            <HeroScene />
+          </Suspense>
           <div className="hero-panel-badge">
             <span className="hero-panel-badge-dot" />
             Real-time interactive 3D scene

@@ -1,7 +1,6 @@
 import { Float, MeshDistortMaterial, OrbitControls, Sphere, Stars } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Suspense, useMemo, useRef } from "react";
-import * as THREE from "three";
 
 const ParticleField = () => {
   const pointsRef = useRef(null);
