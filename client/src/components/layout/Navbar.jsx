@@ -16,6 +16,7 @@ const navItems = [
 export const Navbar = () => {
   const { mode, toggleMode } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const adminLoginUrl = import.meta.env.VITE_ADMIN_URL || "https://your-admin-domain.vercel.app/#/login";
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-slate-950/80 backdrop-blur">
@@ -28,6 +29,12 @@ export const Navbar = () => {
             FolioMind
           </Link>
           <div className="flex items-center gap-2">
+            <a
+              href={adminLoginUrl}
+              className="hidden rounded-full border border-primary/35 bg-primary/10 px-4 py-2 text-sm font-medium text-primary transition hover:border-primary/60 hover:bg-primary/15 hover:text-white md:inline-flex"
+            >
+              Login
+            </a>
             <button
               type="button"
               onClick={toggleMode}
@@ -68,6 +75,13 @@ export const Navbar = () => {
 
         {isMenuOpen && (
           <div className="mt-3 grid gap-2 md:hidden">
+            <a
+              href={adminLoginUrl}
+              onClick={() => setIsMenuOpen(false)}
+              className="rounded-xl border border-primary/25 bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition hover:border-primary/50 hover:text-white"
+            >
+              Login
+            </a>
             {navItems.map((item) => (
               <NavLink
                 key={item.to}
