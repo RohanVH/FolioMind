@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowRight, Download, Sparkles } from "lucide-react";
+import { ArrowRight, Download } from "lucide-react";
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { PageContainer } from "../components/layout/PageContainer";
@@ -42,31 +42,28 @@ export const HomePage = ({ site, featuredProjects = [] }) => {
           className="relative z-10 flex flex-col justify-between gap-8"
         >
           <div className="space-y-5">
-            <span className="hero-kicker">
-              <Sparkles size={14} />
-              AI-native full stack portfolio
-            </span>
+            <span className="hero-kicker">Full Stack Engineer • Product Systems • AI Workflows</span>
             <div className="space-y-4">
               <h2 className="hero-headline">
-                Building vivid digital products with backend depth and cinematic frontend polish.
+                Engineering polished interfaces, resilient APIs, and product systems that scale with clarity.
               </h2>
               <p className="max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
                 {site?.heroIntro ||
-                  "I design modern product experiences, intelligent interfaces, and resilient systems that feel sharp in motion and stable in production."}
+                  "I build software with a strong bias for structure, usability, and execution quality across frontend, backend, and AI-powered features."}
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="hero-stat-card">
-                <p className="hero-stat-label">Focus</p>
-                <p className="hero-stat-value">Immersive product UX</p>
+                <p className="hero-stat-label">Frontend</p>
+                <p className="hero-stat-value">High-signal product interfaces</p>
               </div>
               <div className="hero-stat-card">
-                <p className="hero-stat-label">Stack</p>
-                <p className="hero-stat-value">React, Node.js, AI</p>
+                <p className="hero-stat-label">Backend</p>
+                <p className="hero-stat-value">APIs, auth, data integrity</p>
               </div>
               <div className="hero-stat-card">
-                <p className="hero-stat-label">Approach</p>
-                <p className="hero-stat-value">Fast, polished, reliable</p>
+                <p className="hero-stat-label">Delivery</p>
+                <p className="hero-stat-value">Fast iteration with discipline</p>
               </div>
             </div>
           </div>
@@ -104,7 +101,7 @@ export const HomePage = ({ site, featuredProjects = [] }) => {
           </Suspense>
           <div className="hero-panel-badge">
             <span className="hero-panel-badge-dot" />
-            Real-time interactive 3D scene
+            Realtime systems canvas
           </div>
         </motion.div>
       </section>
